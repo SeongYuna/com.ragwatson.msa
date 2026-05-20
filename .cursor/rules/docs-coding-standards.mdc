@@ -1,0 +1,28 @@
+---
+description: 코딩 전 docs/AIOPS 규칙 필수 참조 (루트 .cursorrules)
+alwaysApply: true
+---
+
+# Docs-first coding standards
+
+**루트 규칙:** `.cursorrules`  
+**규칙 인덱스:** `docs/AIOPS/README.md`
+
+## Before writing or editing code
+
+1. Read the relevant rule file under `docs/AIOPS/` for the task area.
+2. Do **not** invent project conventions that are not documented in `docs/`.
+3. If no rule exists, propose adding one under `docs/AIOPS/` before applying a new pattern widely.
+
+## By area
+
+| Area | Document |
+|------|----------|
+| React / Next.js frontend | `docs/AIOPS/frontend/REACT_RULES.md` |
+| Backend (Python/FastAPI) | `backend/CLAUDE.md`, `backend/.cursorrules` |
+
+## Frontend reminder
+
+- Minimize `useState`; group related fields in one object.
+- Prefer `FormData` + `form onSubmit` over per-field controlled state when refactoring forms.
+- See `REACT_RULES.md` for the canonical `handleSignup` / `Object.fromEntries` pattern.

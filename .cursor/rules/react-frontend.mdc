@@ -1,0 +1,36 @@
+---
+description: React useState 최소화, FormData 폼 패턴 (REACT_RULES.md)
+globs: frontend/**/*.{tsx,jsx}
+alwaysApply: false
+---
+
+# React Frontend Rules
+
+**인덱스:** `docs/AIOPS/README.md`  
+**전체 규칙:** `docs/AIOPS/frontend/REACT_RULES.md`  
+**루트:** `.cursorrules` (docs 경유 필수)
+
+## useState
+
+- 필드마다 `useState`를 두지 않는다.
+- 관련 state는 **하나의 객체**로 묶는다.
+- 폼은 **`FormData` + `onSubmit`** 우선 (입력마다 `setState` 금지).
+
+## Form 제출 패턴 (필수 참고)
+
+```tsx
+const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault()
+  const formData = new FormData(e.currentTarget)
+  const formProps = Object.fromEntries(formData.entries())
+  // API: JSON.stringify(formProps)
+}
+```
+
+- `<input name="fieldName" />` 필수
+- `<button type="submit">` 사용
+- 리팩터 시 기존 API·UX 유지
+
+## 리팩터 요청 시
+
+`REACT_RULES.md` §3 지시문대로: 여러 state → 객체 압축 또는 FormData 전환.
