@@ -1,6 +1,6 @@
 # 프로젝트 에이전트 하네스 (Karpathy 정렬)
 
-행동·맥락의 **전체 본문**은 루트 `CLAUDE.md`를 따른다. 이 파일은 Cursor에 항상 실리는 **짧은 고삐**다. (안드레이 카파시가 지적한 가정 밀고 가기·과설계·직교 편집을 줄이기 위한 것.)
+행동·맥락의 **전체 본문**은 루트 `CLAUDE.md`를 따른다. 이 파일은 Cursor에 항상 실리는 **짧은 고삐**다.
 
 ## 구현 전 사고
 
@@ -23,6 +23,21 @@
 - 모호한 지시는 **검증 가능한 완료 조건**으로 바꾼다. (예: 재현 테스트 → 통과, 테스트·린트·CI 통과.)
 - 다단계면 짧은 계획과 각 단계의 **검증**을 적는다.
 
+## Wiki + LLM PKS
+
+- **Wiki** (`docs/`, `docs/AIOPS/`, `CLAUDE.md`) = 사람이 읽는 규범.
+- **PKS** = Wiki와 맞춘 코드 계약(포트·DTO·provider·테스트·CI). Wiki에 없는 관례를 **추측으로 만들지 않는다.**
+- 불일치 발견 시 구현 전에 Wiki 갱신 또는 사용자 확인.
+
+## 백엔드 — SOLID · 헥사고날 · 클린 · DDD
+
+- **SOLID 필수.** Router → port만; 구현체 조립은 `dependencies/*_provider.py`만 (DIP).
+- **레이어:** `adapter/inbound` → `app`(ports · use_cases · dtos) → `adapter/outbound`(pg · orm · mappers). `domain`은 엔티티·VO.
+- **읽기/쓰기 분리:** Command INSERT / Query SELECT. ORM은 outbound; API schema는 inbound.
+- **경로 표기 (문서·응답):**
+  - 앱: `backend/`·`apps/` 생략 → `titanic_m_learning/...`
+  - core: `backend.core...` → 예 `backend.core.database`
+
 ## 트레이드오프
 
 - 기본은 **신중함** 우선. 사소·자명한 한 줄 수정은 판단으로 완화해도 된다.
@@ -31,5 +46,5 @@
 
 - `docs/AIOPS/README.md` — 영역별 코딩 규칙 인덱스
 - `docs/AIOPS/backend/entity_rules.md` — DB 테이블 PK(`id` 정수) 통일 규칙
-- `CLAUDE.md` — 네 원칙 전문, 인용, 체크리스트
+- `CLAUDE.md` — 네 원칙 전문, PKS, 백엔드 아키텍처, 체크리스트
 - `CURSOR.md` — Cursor에서 규칙·스킬·CI로 하네스 쌓는 방법

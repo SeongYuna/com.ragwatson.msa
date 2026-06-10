@@ -1,0 +1,37 @@
+# 개발용: 로컬 소스 마운트 + hot reload
+# 실행: docker compose -f docker-compose.yaml -f docker-compose.dev.yaml up --build
+#
+# 프로덕션(빌드 결과물 고정): docker compose up --build
+
+services:
+  my-backend:
+    volumes:
+      - ./backend:/app
+    command:
+      [
+        "uvicorn",
+        "main:app",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8000",
+        "--reload",
+      ]
+
+  my-frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    environment:
+      NODE_ENV: development
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+      # Windows Docker Desktop에서 파일 변경 감지 보조
+      WATCHPACK_POLLING: "true"
+      CHOKIDAR_USEPOLLING: "true"
+    volumes:
+      - ./frontend:/app
+      - frontend_node_modules:/app/node_modules
+    command: ["pnpm", "dev", "-H", "0.0.0.0", "-p", "3000"]
+
+volumes:
+  frontend_node_modules:

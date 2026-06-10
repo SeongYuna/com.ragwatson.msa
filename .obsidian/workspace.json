@@ -1,0 +1,227 @@
+{
+  "main": {
+    "id": "b8c01ba5ff844d44",
+    "type": "split",
+    "children": [
+      {
+        "id": "cc76433310289798",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "f0e26225d2af024f",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "CLAUDE.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "CLAUDE"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "83539e78b03c83df",
+    "type": "split",
+    "children": [
+      {
+        "id": "c198fc1a27385e0e",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "f3cc736e6c53276b",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "파일 탐색기"
+            }
+          },
+          {
+            "id": "103ca5ea84242183",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "검색"
+            }
+          },
+          {
+            "id": "a56eeebc5995172b",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "북마크"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "a4254d77caa81aae",
+    "type": "split",
+    "children": [
+      {
+        "id": "5bde985ea4b9bfb7",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "ecde66e77516f97e",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "docs/수업/260527.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "260527 의 백링크"
+            }
+          },
+          {
+            "id": "811a6d93f77a1cd7",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "docs/수업/260527.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "260527 의 나가는 링크"
+            }
+          },
+          {
+            "id": "370d325dd4379548",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "태그"
+            }
+          },
+          {
+            "id": "a8280518b5d73e65",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "모든 속성"
+            }
+          },
+          {
+            "id": "50835a4934f24ad9",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "docs/수업/260527.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "260527 의 개요"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:빠른 전환기 열기": false,
+      "graph:그래프 뷰 열기": false,
+      "canvas:새 캔버스 만들기": false,
+      "daily-notes:오늘의 일일 노트 열기": false,
+      "templates:템플릿 삽입": false,
+      "command-palette:명령어 팔레트 열기": false,
+      "bases:새 베이스 생성하기": false
+    }
+  },
+  "active": "f0e26225d2af024f",
+  "lastOpenFiles": [
+    "_harness/config.md",
+    "frontend/.next/dev/server/app/project/app/team/folders/[id]/page/server-reference-manifest.json",
+    "frontend/.next/dev/server/app/project/app/team/folders/[id]/page/react-loadable-manifest.json",
+    "frontend/.next/dev/server/app/project/app/team/folders/[id]/page/next-font-manifest.json",
+    "frontend/.next/dev/server/app/project/app/team/folders/[id]/page/app-paths-manifest.json",
+    "frontend/.next/dev/server/app/project/app/team/folders/[id]/page/build-manifest.json",
+    "frontend/.next/dev/server/app/project/app/team/folders/[id]/page_client-reference-manifest.js",
+    "frontend/.next/dev/server/app/project/app/team/folders/[id]/page.js",
+    "frontend/.next/dev/server/app/project/app/team/folders/[id]/page.js.map",
+    "frontend/.next/dev/server/app/project/app/team/members/page/next-font-manifest.json",
+    "frontend/.next/dev/server/app/project/app/team/folders/[id]/page",
+    "CLAUDE.md",
+    ".venv/Lib/site-packages/numpy-2.4.4.dist-info/licenses/numpy/_core/src/npysort/x86-simd-sort/LICENSE.md",
+    ".venv/Lib/site-packages/pip-26.1.1.dist-info/licenses/src/pip/_vendor/idna/LICENSE.md",
+    ".venv/Lib/site-packages/numpy-2.4.4.dist-info/licenses/numpy/random/src/pcg64/LICENSE.md",
+    ".venv/Lib/site-packages/numpy-2.4.4.dist-info/licenses/numpy/random/src/splitmix64/LICENSE.md",
+    ".venv/Lib/site-packages/numpy-2.4.4.dist-info/licenses/numpy/random/src/philox/LICENSE.md",
+    ".venv/Lib/site-packages/numpy-2.4.4.dist-info/licenses/numpy/random/src/sfc64/LICENSE.md",
+    ".venv/Lib/site-packages/numpy-2.4.4.dist-info/licenses/numpy/random/src/mt19937/LICENSE.md",
+    ".venv/Lib/site-packages/numpy-2.4.4.dist-info/licenses/numpy/random/src/distributions/LICENSE.md",
+    ".venv/Lib/site-packages/numpy-2.4.4.dist-info/licenses/numpy/fft/pocketfft/LICENSE.md",
+    ".venv/Lib/site-packages/fastapi/.agents/skills/fastapi/references/streaming.md",
+    ".venv/Lib/site-packages/fastapi/.agents/skills/fastapi/references/other-tools.md",
+    ".venv/Lib/site-packages/fastapi/.agents/skills/fastapi/references/dependencies.md",
+    ".venv/Lib/site-packages/numpy-2.4.4.dist-info/licenses/numpy/random/LICENSE.md",
+    ".venv/Lib/site-packages/fastapi/.agents/skills/fastapi/SKILL.md",
+    ".venv/Lib/site-packages/sklearn/externals/array_api_compat/README.md",
+    ".venv/Lib/site-packages/sklearn/externals/array_api_extra/README.md",
+    ".venv/Lib/site-packages/sklearn/datasets/images/flower.jpg",
+    ".venv/Lib/site-packages/sklearn/datasets/images/china.jpg",
+    ".venv/Lib/site-packages/scipy/ndimage/tests/dots.png",
+    ".venv/Lib/site-packages/scipy/fft/_pocketfft/LICENSE.md",
+    ".venv/Lib/site-packages/pip/_vendor/idna/LICENSE.md",
+    ".venv/Lib/site-packages/uvicorn-0.47.0.dist-info/licenses/LICENSE.md",
+    ".venv/Lib/site-packages/starlette-0.50.0.dist-info/licenses/LICENSE.md",
+    ".venv/Lib/site-packages/pyparsing/ai/best_practices.md",
+    ".venv/Lib/site-packages/numpy/random/LICENSE.md",
+    ".venv/Lib/site-packages/idna-3.15.dist-info/licenses/LICENSE.md"
+  ]
+}

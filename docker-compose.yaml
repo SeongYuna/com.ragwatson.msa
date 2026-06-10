@@ -1,0 +1,32 @@
+# Stack: Backend Python 3.13 (FastAPI) · Frontend Node 24 (Next.js standalone)
+#
+# 프로덕션(코드 변경 시 --build 재빌드 필요):
+#   docker compose up --build
+#
+# 개발(hot reload, 소스 volume 마운트):
+#   docker compose -f docker-compose.yaml -f docker-compose.dev.yaml up --build
+
+services:
+  my-backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./backend/.env
+    restart: always
+
+  my-frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      # 브라우저에서 호출하므로 컨테이너명이 아닌 localhost 사용
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+    restart: always
+    depends_on:
+      - my-backend
