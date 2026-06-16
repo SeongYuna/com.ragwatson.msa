@@ -1,8 +1,21 @@
 # Cursor에서의 하네스 엔지니어링 (Karpathy 의도 정렬)
 
-이 문서는 **Cursor** 안에서 LLM 코딩 어시스턴트를 **하네스**(안전대·고삐)로 묶는 방법을 설명한다. 행동 규범의 본문은 저장소 루트의 [`CLAUDE.md`](./CLAUDE.md)에 두고, 여기서는 **도구·규칙·워크플로**가 그 규범을 실제로 지키게 만드는 쪽을 다룬다.
+This document explains how to **harness** LLM coding assistants inside **Cursor**. Behavioral rules live in [`CLAUDE.md`](./CLAUDE.md); this file covers **tooling, rules, and workflow** that keep those rules enforced in practice.
 
-**배경:** [안드레이 카파시(Andrej Karpathy)](https://x.com/karpathy/status/2015883857489522876)는 모델이 잘못된 가정으로 밀고 가고, 과설계하며, 과제와 무관한 코드까지 건드리는 경향을 지적했다. 이를 상쇄하려면 “모델에게만 잘 말한다”가 아니라 **환경·입력·검증**을 설계하는 **하네스 엔지니어링**이 필요하다. 네 가지 원칙(구현 전 사고, 단순성 우선, 정밀한 수정, 목표 중심 실행)은 [`CLAUDE.md`](./CLAUDE.md)와 동일한 뼈대를 따른다.
+**Background:** [Andrej Karpathy](https://x.com/karpathy/status/2015883857489522876) observed that models push ahead on wrong assumptions, over-engineer, and touch unrelated code. Counter that with **harness engineering** — design environment, inputs, and verification — not prompts alone. The four principles in [`CLAUDE.md`](./CLAUDE.md) are the shared backbone.
+
+---
+
+## Agent language & scope
+
+| Topic | Rule |
+|-------|------|
+| **Response language** | Always respond in **Korean**, unless the user explicitly requests another language. |
+| **Behavioral rules** | [`CLAUDE.md`](./CLAUDE.md) §1–4 — do not duplicate here. |
+| **Project rules** | [`CLAUDE.md`](./CLAUDE.md) §5–6, `docs/AIOPS/`, `.cursor/rules/` |
+| **Tradeoff** | Caution over speed; skip mechanical application on trivial edits. |
+
+When instructions conflict, prefer **project-specific docs** (`docs/AIOPS/`, backend architecture in `CLAUDE.md`) over generic habits.
 
 ---
 
@@ -52,9 +65,20 @@
 
 ## 사용자(사람)가 하네스를 쓰는 법
 
-- 작업을 줄 때 **완료 정의**를 한 문장이라도 붙인다. (예: “`npm test` 전부 통과”, “해당 엔드포인트에 단위 테스트 추가”)  
-- 모호하면 **에이전트가 질문하게 둔다** — 조기에 질문이 나오면 하네스가 먹고 있는 것이다.  
-- 리뷰할 때는 **요청과 무관한 줄**이 없는지 본다. [`CLAUDE.md`](./CLAUDE.md)의 “지침이 먹고 있는지 확인” 절을 체크리스트로 쓸 수 있다.
+- Attach a **definition of done** in one sentence when assigning work. (e.g. “all `npm test` pass”, “add a unit test for that endpoint”)  
+- When requirements are ambiguous, **let the agent ask first** — early questions mean the harness is working.  
+- On review, check for **lines unrelated to the request**. Use the “Signs the guidelines are working” section in [`CLAUDE.md`](./CLAUDE.md) as a checklist.
+
+### Prompt patterns that reduce mistakes
+
+| Weak prompt | Stronger prompt |
+|-------------|-----------------|
+| “Add validation” | “Add validation; write tests for invalid inputs, then make them pass.” |
+| “Fix the bug” | “Reproduce the bug in a test, then fix until it passes.” |
+| “Refactor X” | “Refactor X; existing tests must pass before and after.” |
+| “Make it work” | “Done when: [command] succeeds and [behavior] is verified.” |
+
+For multi-step work, ask the agent to state a short plan: `Step → verify: [check]` per step.
 
 ---
 

@@ -2,7 +2,6 @@
   "userIgnoreFilters": [
     "**/*.py",
     "__pycache__",
-    "node_modules",
     ".next",
     "out",
     ".coverage",
@@ -18,7 +17,9 @@
     "**/*.scss",
     ".env*",
     "backend/alembic/",
-    ".venv/"
+    ".venv/",
+    "frontend/node_modules/"
   ],
-  "showUnsupportedFiles": true
+  "showUnsupportedFiles": false,
+  "alwaysUpdateLinks": true
 }
