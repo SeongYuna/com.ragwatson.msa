@@ -150,8 +150,7 @@ Do not restate them here. Sections **5–6** are **project-specific** and live i
 
 각 영역의 상세 지침은 해당 디렉터리의 CLAUDE.md를 따른다.
 
-| 영역            | 파일                                                                                                  | 주요 내용                       |
-| ------------- | --------------------------------------------------------------------------------------------------- | --------------------------- |
-| **백엔드**       | [`backend/CLAUDE.md`](backend/CLAUDE.md)                                                            | 하네스 엔지니어링, 헥사고날 아키텍처, SOLID |
-| **프론트엔드**     | [`frontend/CLAUDE.md`](frontend/CLAUDE.md)                                                          | 컴포넌트 구조, 상태 관리, API 연동      |
-| **Titanic 앱** | [`backend/apps/titanic_m_learning/_docs/CLAUDE.md`](backend/apps/titanic_m_learning/_docs/CLAUDE.md) | 바운디드 컨텍스트, 참고 구현 경로         |
+| 영역            | 파일                                                                                                   | 주요 내용                       |
+| ------------- | ---------------------------------------------------------------------------------------------------- | --------------------------- |
+| **백엔드**       | [`backend/CLAUDE.md`](backend/CLAUDE.md)                                                             | 하네스 엔지니어링, 헥사고날 아키텍처, SOLID |
+| **프론트엔드**     | [`frontend/CLAUDE.md`](frontend/CLAUDE.md)                                                           | 컴포넌트 구조, 상태 관리, API 연동      |

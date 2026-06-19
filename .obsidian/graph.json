@@ -20,27 +20,6 @@
         "a": 1,
         "rgb": 2600544
       }
-    },
-    {
-      "query": "path:_docs",
-      "color": {
-        "a": 1,
-        "rgb": 9323693
-      }
-    },
-    {
-      "query": "path:vault/backend",
-      "color": {
-        "a": 1,
-        "rgb": 15105570
-      }
-    },
-    {
-      "query": "path:vault/frontend ",
-      "color": {
-        "a": 1,
-        "rgb": 9807270
-      }
     }
   ],
   "collapse-display": false,
@@ -54,5 +33,5 @@
   "linkStrength": 0.578125,
   "linkDistance": 250,
   "scale": 0.7514342709698699,
-  "close": false
+  "close": true
 }
