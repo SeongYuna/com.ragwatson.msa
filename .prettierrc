@@ -1,0 +1,31 @@
+{
+  "printWidth": 100,
+  "tabWidth": 2,
+  "useTabs": false,
+  "endOfLine": "lf",
+  "overrides": [
+    {
+      "files": "*.md",
+      "options": {
+        "proseWrap": "always",
+        "printWidth": 100
+      }
+    },
+    {
+      "files": ["*.ts", "*.tsx"],
+      "options": {
+        "semi": false,
+        "singleQuote": true,
+        "printWidth": 100,
+        "trailingComma": "all"
+      }
+    },
+    {
+      "files": ["*.js", "*.mjs"],
+      "options": {
+        "semi": false,
+        "singleQuote": true
+      }
+    }
+  ]
+}

@@ -5,8 +5,92 @@
 #
 # 개발(hot reload, 소스 volume 마운트):
 #   docker compose -f docker-compose.yaml -f docker-compose.dev.yaml up --build
+#
+# DB만 먼저 올리기:
+#   docker compose up pgvector redis neo4j -d
 
 services:
+  # ── DB 레이어 ─────────────────────────────────────────────────────────────
+
+  # 1. pgvector — PostgreSQL 17 + pgvector 확장 (관계형 + 벡터 검색)
+  #    Neon(외부) 대신 로컬 컨테이너로 데이터 저장
+  pgvector:
+    image: pgvector/pgvector:pg17
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - pgvector_data:/var/lib/postgresql/data
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # 2. Redis — 캐시 · 세션 · 큐
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    restart: always
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # 3. Neo4j — 그래프 DB (Starcraft Hub 온톨로지)
+  neo4j:
+    image: neo4j:5-community
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    environment:
+      NEO4J_AUTH: neo4j/${NEO4J_PASSWORD}
+    volumes:
+      - neo4j_data:/data
+    restart: always
+    healthcheck:
+      test: ["CMD", "neo4j", "status"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+
+  # 4. n8n — 워크플로우 자동화 (Gmail 발송 등)
+  n8n:
+    image: n8nio/n8n:latest
+    ports:
+      - "5678:5678"
+    environment:
+      N8N_HOST: 0.0.0.0
+      N8N_PORT: 5678
+      N8N_PROTOCOL: https
+      WEBHOOK_URL: https://n8n.seongyuna.cloud
+      GENERIC_TIMEZONE: Asia/Seoul
+    volumes:
+      - n8n_data:/home/node/.n8n
+    restart: always
+
+
+  # 5. Cloudflare Named Tunnel — seongyuna.cloud (api + n8n 외부 노출)
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    command: tunnel --no-autoupdate run --token ${CLOUDFLARE_TUNNEL_TOKEN}
+    env_file:
+      - ./backend/.env
+    restart: always
+    depends_on:
+      - n8n
+
+  # ── 앱 레이어 ─────────────────────────────────────────────────────────────
+
   my-backend:
     build:
       context: ./backend
@@ -17,7 +101,21 @@ services:
       - ./backend/.env
     environment:
       OLLAMA_HOST: http://host.docker.internal:11434
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
     restart: always
+    depends_on:
+      pgvector:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      neo4j:
+        condition: service_healthy
 
   my-frontend:
     build:
@@ -27,8 +125,14 @@ services:
       - "3000:3000"
     environment:
       NODE_ENV: production
-      # 브라우저에서 호출하므로 컨테이너명이 아닌 localhost 사용
       NEXT_PUBLIC_API_URL: http://localhost:8000
     restart: always
     depends_on:
       - my-backend
+
+volumes:
+  pgvector_data:
+  redis_data:
+  neo4j_data:
+  n8n_data:
+    external: true  # 기존 계정·워크플로우가 저장된 볼륨 재사용

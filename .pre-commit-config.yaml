@@ -1,0 +1,105 @@
+# .pre-commit-config.yaml
+#
+# [하네스 엔지니어링 목적]
+# 커밋 전에 세 레이어(Flutter·Python·Next.js) 모두의 린트·포맷·타입 검사를 자동 실행한다.
+# 하나라도 실패하면 커밋 자체를 차단 → 깨진 코드가 저장소에 진입하는 것을 원천 봉쇄한다.
+#
+# [설치]
+# pip install pre-commit
+# pre-commit install
+#
+# [수동 전체 실행]
+# pre-commit run --all-files
+
+repos:
+  # ─────────────────────────────────────────────
+  # 공통: 기본 파일 위생
+  # ─────────────────────────────────────────────
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-json
+      - id: check-merge-conflict
+      - id: detect-private-key
+
+  # ─────────────────────────────────────────────
+  # Python (backend)
+  # ─────────────────────────────────────────────
+  - repo: local
+    hooks:
+      - id: ruff-lint
+        name: "[Python] Ruff lint"
+        entry: ruff check --fix
+        language: system
+        files: \.py$
+        pass_filenames: true
+
+      - id: ruff-format
+        name: "[Python] Ruff format"
+        entry: ruff format
+        language: system
+        files: \.py$
+        pass_filenames: true
+
+      - id: mypy
+        name: "[Python] mypy type check"
+        entry: bash -c 'cd backend && mypy apps core'
+        language: system
+        files: \.py$
+        pass_filenames: false
+
+      - id: import-linter
+        name: "[Python] Hub-Spoke topology (import-linter)"
+        entry: bash -c 'cd backend && lint-imports'
+        language: system
+        files: \.py$
+        pass_filenames: false
+
+      - id: harness-validate
+        name: "[Harness] Ontology topology validator"
+        entry: python backend/scripts/validate_harness.py
+        language: system
+        pass_filenames: false
+        always_run: false
+        files: \.md$
+
+  # ─────────────────────────────────────────────
+  # Flutter (flutter_app)
+  # ─────────────────────────────────────────────
+  - repo: local
+    hooks:
+      - id: dart-format
+        name: "[Flutter] dart format"
+        entry: bash -c 'cd flutter_app && dart format --set-exit-if-changed .'
+        language: system
+        files: \.dart$
+        pass_filenames: false
+
+      - id: dart-analyze
+        name: "[Flutter] dart analyze"
+        entry: bash -c 'cd flutter_app && dart analyze --fatal-infos'
+        language: system
+        files: \.dart$
+        pass_filenames: false
+
+  # ─────────────────────────────────────────────
+  # Next.js (frontend)
+  # ─────────────────────────────────────────────
+  - repo: local
+    hooks:
+      - id: eslint
+        name: "[Next.js] ESLint"
+        entry: bash -c 'cd frontend && pnpm eslint . --max-warnings 0'
+        language: system
+        files: \.(ts|tsx|js|mjs)$
+        pass_filenames: false
+
+      - id: prettier
+        name: "[Next.js] Prettier format check"
+        entry: bash -c 'cd frontend && pnpm prettier --check .'
+        language: system
+        files: \.(ts|tsx|js|mjs|json|md)$
+        pass_filenames: false

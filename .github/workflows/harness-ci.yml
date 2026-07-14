@@ -1,0 +1,255 @@
+# .github/workflows/harness-ci.yml
+#
+# 하네스 엔지니어링 CI 파이프라인
+#
+# [목적]
+# 카파시식 하네스 — 코드가 올바르게 작동할 수 있는 환경을 CI에서 엄격하게 강제한다.
+# 스타 토폴로지 무결성(spoke→spoke 금지), 타입 안전성, 온톨로지 구조를 자동 검증한다.
+#
+# [파이프라인 구조]
+# ── Python (backend) ──────────────────────────────
+# lint        → 코드 품질·스타일 (Ruff)
+# type-check  → 포트(ABC) 타입 계약 (mypy)
+# topology    → Hub-Spoke 의존성 규칙 (import-linter)
+# harness     → 온톨로지 토폴로지 위반·고립 노드 검사 (validate_harness.py)
+# test        → 단위·통합 테스트 (pytest)
+# ── Flutter ───────────────────────────────────────
+# flutter-analyze → dart analyze --fatal-infos
+# ── Next.js (frontend) ────────────────────────────
+# frontend-lint   → ESLint (no-console, no-any 등)
+# frontend-type   → tsc --noEmit
+
+name: Harness CI
+
+on:
+  push:
+    branches: ["main", "develop"]
+  pull_request:
+    branches: ["main", "develop"]
+
+env:
+  PYTHON_VERSION: "3.13"
+  WORKING_DIR: backend
+
+jobs:
+  # ─────────────────────────────────────────────
+  # 1. 린트·포맷 검사 (Ruff)
+  # ─────────────────────────────────────────────
+  lint:
+    name: Lint & Format (Ruff)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ env.WORKING_DIR }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install Ruff
+        run: pip install ruff
+
+      - name: Ruff lint
+        run: ruff check .
+
+      - name: Ruff format check
+        run: ruff format --check .
+
+  # ─────────────────────────────────────────────
+  # 2. 타입 검사 (mypy)
+  # 허브·스포크 포트(ABC) 타입 계약 엄격 검증
+  # ─────────────────────────────────────────────
+  type-check:
+    name: Type Check (mypy)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ env.WORKING_DIR }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt mypy
+
+      - name: mypy
+        run: mypy apps core
+
+  # ─────────────────────────────────────────────
+  # 3. 스타 토폴로지 의존성 검사 (import-linter)
+  # spoke→spoke 직접 참조·허브의 스포크 내부 참조 금지
+  # ─────────────────────────────────────────────
+  topology-check:
+    name: Star Topology Dependency Check (import-linter)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ env.WORKING_DIR }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt import-linter
+
+      - name: Check Hub-Spoke dependency contracts
+        run: lint-imports
+
+  # ─────────────────────────────────────────────
+  # 4. 온톨로지 하네스 검증 (validate_harness.py)
+  # MD 파일 토폴로지 위반·고립 노드·순환 참조 탐지
+  # ─────────────────────────────────────────────
+  harness-validate:
+    name: Harness Ontology Validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install validator dependencies
+        run: pip install pyyaml
+
+      - name: Run harness validator
+        run: python backend/scripts/validate_harness.py
+
+  # ─────────────────────────────────────────────
+  # Flutter — dart analyze (--fatal-infos로 경고도 에러 취급)
+  # ─────────────────────────────────────────────
+  flutter-analyze:
+    name: Flutter Analyze
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "stable"
+          cache: true
+
+      - name: Flutter pub get
+        working-directory: flutter_app
+        run: flutter pub get
+
+      - name: dart analyze
+        working-directory: flutter_app
+        run: dart analyze --fatal-infos
+
+      - name: dart format check
+        working-directory: flutter_app
+        run: dart format --set-exit-if-changed .
+
+  # ─────────────────────────────────────────────
+  # Next.js — ESLint + tsc
+  # no-console·no-explicit-any 에러 강제
+  # ─────────────────────────────────────────────
+  frontend-lint:
+    name: Next.js ESLint
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: ESLint
+        run: pnpm eslint . --max-warnings 0
+
+      - name: Prettier check
+        run: pnpm prettier --check .
+
+  frontend-type:
+    name: Next.js TypeScript Check
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: tsc type check
+        run: pnpm tsc --noEmit
+
+  # ─────────────────────────────────────────────
+  # 5. 테스트 (pytest)
+  # 위 모든 하네스 검사가 통과한 후에만 실행
+  # ─────────────────────────────────────────────
+  test:
+    name: Tests (pytest)
+    needs: [lint, type-check, topology-check, harness-validate, flutter-analyze, frontend-lint, frontend-type]
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ env.WORKING_DIR }}
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: testdb
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt pytest pytest-asyncio
+
+      - name: Run tests
+        env:
+          DATABASE_URL: postgresql+asyncpg://test:test@localhost:5432/testdb
+        run: pytest apps --asyncio-mode=auto -v
