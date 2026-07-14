@@ -26,3 +26,6 @@ Thumbs.db
 my_history.txt
 titanic_correlation.png
 runs/
+
+# 예전 vault(.gitmodules 미등록) 잔재 - 인덱스에 다시 딸려오지 않도록 제외
+vault/
