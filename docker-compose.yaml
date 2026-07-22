@@ -84,7 +84,7 @@ services:
     image: cloudflare/cloudflared:latest
     command: tunnel --no-autoupdate run --token ${CLOUDFLARE_TUNNEL_TOKEN}
     env_file:
-      - ./backend/.env
+      - ./backend/.env.backend
     restart: always
     depends_on:
       - n8n
@@ -96,7 +96,7 @@ services:
     ports:
       - "8000:8000"
     env_file:
-      - ./backend/.env
+      - ./backend/.env.backend
     environment:
       OLLAMA_HOST: http://host.docker.internal:11434
     deploy:
@@ -113,6 +113,24 @@ services:
       redis:
         condition: service_healthy
       neo4j:
+        condition: service_healthy
+
+  # Auth Gateway — auth.seongyuna.cloud. my-backend와 같은 이미지, 엔트리포인트만 다르다.
+  # 개인키(JWT_PRIVATE_KEY)는 이 컨테이너의 .env.auth에만 있다.
+  # ports: 이 환경의 cloudflared는 host.docker.internal:PORT 방식으로 접근한다(my-backend/n8n과 동일).
+  # 사설망(집 PC, 공인 IP 없음)이라 실제 노출 범위는 LAN 내부로 한정된다 — 확인 후 결정.
+  auth:
+    image: seongyuna/backend:latest
+    command: uvicorn auth_main:app --host 0.0.0.0 --port 9000
+    ports:
+      - "9000:9000"
+    env_file:
+      - ./backend/.env.auth
+    restart: always
+    depends_on:
+      pgvector:
+        condition: service_healthy
+      redis:
         condition: service_healthy
 
   my-frontend:
